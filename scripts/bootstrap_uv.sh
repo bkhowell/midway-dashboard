@@ -52,7 +52,7 @@ if [[ "$CURRENT_PYSLURM_VER" != "${SLURM_VERSION}."* ]]; then
   fi
   (
     cd "$PYSLURM_REPO"
-    CC=/usr/bin/clang CXX=/usr/bin/clang++ \
+    CC=/software/clang-13.0.0-el8-x86_64/bin/clang CXX=/software/clang-13.0.0-el8-x86_64/bin/clang++ \
       "$REPO_DIR/.venv/bin/python" setup.py build "--slurm=$SLURM_ROOT" install
   )
 fi

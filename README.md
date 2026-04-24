@@ -5,7 +5,15 @@ This project generates `caslake_stat_1.png` from live Slurm data on Midway3 (`ca
 ## Installation
 
 1. Clone this repo and enter it.
-2. Create/sync the UV environment:
+2. Load Modules 
+
+```bash
+module load python/miniforge-25.3.0
+module load uv/latest
+module load clang/13.0.0
+```
+
+3. Create/sync the UV environment:
 
 ```bash
 ./scripts/bootstrap_uv.sh
