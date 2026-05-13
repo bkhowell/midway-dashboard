@@ -4,6 +4,6 @@ pyslurm-*
 __pycache__/
 .ruff_cache/
 logs/
-caslake_stat_1.png
+*_stat_*.png
 historical.sqlite
 .cache/

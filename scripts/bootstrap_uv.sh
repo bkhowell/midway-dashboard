@@ -52,8 +52,9 @@ if [[ "$CURRENT_PYSLURM_VER" != "${SLURM_VERSION}."* ]]; then
   fi
   (
     cd "$PYSLURM_REPO"
-    CC=/usr/bin/clang CXX=/usr/bin/clang++ \
-      "$REPO_DIR/.venv/bin/python" setup.py build "--slurm=$SLURM_ROOT" install
+    	CC="$(which clang)" CXX="$(which clang++)" \
+  	CFLAGS="-I/software/python-miniforge-25.3.0-el8-x86_64/pkgs/python-3.11.14-hd63d673_3_cpython/include/python3.11" \
+  	"$REPO_DIR/.venv/bin/python" setup.py build "--slurm=$SLURM_ROOT" install
   )
 fi
 
