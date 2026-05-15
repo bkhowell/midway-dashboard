@@ -2,7 +2,7 @@
 
 This project generates `<Partition_name>_ stat_1.png` from live Slurm data on Midway3 (partition).
 
-By default, it polls the partition caslake Slurm data unless partition is specified by the ```bash --partition=<PartitionName> ``` flag.
+By default, it polls the partition caslake Slurm data unless partition is specified by the ```--partition=<PartitionName> ``` flag.
 
 ## Installation
 
