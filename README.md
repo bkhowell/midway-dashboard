@@ -1,6 +1,6 @@
 # Midway partition Status Plotter
 
-This project generates `<Partition_name>_ stat_1.png` from live Slurm data on Midway3 (partition).
+This project generates `<PartitionName>_ stat_1.png` from live Slurm data on Midway3 (partition).
 
 By default, it polls the partition caslake Slurm data unless partition is specified by the ```--partition=<PartitionName> ``` flag.
 
