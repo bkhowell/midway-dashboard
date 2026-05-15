@@ -1,11 +1,21 @@
-# Caslake Status Plotter
+# Midway partition Status Plotter
 
-This project generates `caslake_stat_1.png` from live Slurm data on Midway3 (`caslake` partition).
+This project generates `<Partition_name>_ stat_1.png` from live Slurm data on Midway3 (partition).
+
+## By default, it polls the partition caslake Slurm data unless partition is specified by the --partition=<PartitionName> flag.
 
 ## Installation
 
 1. Clone this repo and enter it.
-2. Create/sync the UV environment:
+2. Load Modules 
+
+```bash
+module load python/miniforge-25.3.0
+module load uv/latest
+module load clang/13.0.0
+```
+
+3. Create/sync the UV environment:
 
 ```bash
 ./scripts/bootstrap_uv.sh
@@ -21,6 +31,7 @@ This project generates `caslake_stat_1.png` from live Slurm data on Midway3 (`ca
 
 ```bash
 ./run.sh --dry-run
+
 ```
 
 Python is pinned to `3.11` via `.python-version`. UV config is in `pyproject.toml`.
@@ -42,16 +53,16 @@ Then rerun:
 
 ```bash
 cd ..
-./run.sh --dry-run
+./run.sh --dry-run --partition=<PartitonName>
 ```
 
 ## Run Modes
 
-- `./run.sh`: one collection + render pass.
-- `./run_periodic.sh`: loop every ~290 seconds.
-- `./run_cron_5min.sh`: single cron-safe run (lock + logging).
+- `./run.sh --partition=<Partiton name>`: one collection + render pass.
+- `./run_periodic.sh --partition=<PartitonName>`: loop every ~290 seconds.
+- `./run_cron_5min.sh --partition=<PartitonName>`: single cron-safe run (lock + logging).
 
-Output image: `caslake_stat_1.png`  
+Output image: `<PartitionName>_stat_1.png`  
 Cron log: `logs/cron_periodic_slurm_status.log`
 
 ## Cron (Every 5 Minutes)
