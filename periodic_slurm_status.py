@@ -353,10 +353,12 @@ def generate_plot(
             # load
             load = 0.0
             if node is not None:
-                try:
-                    load = float(node["cpu_load"]) / (node_cores / config.n_hyper)
-                except (KeyError, ZeroDivisionError):
-                    pass
+                cpu_load = node.get("cpu_load")
+                if cpu_load is not None:
+                    try:
+                        load = float(cpu_load) / (node_cores / config.n_hyper)
+                    except (KeyError, ZeroDivisionError):
+                        pass
             ax.text(xmax + padx * 10, j, "%.0f%%" % load, color="#333333", **textOpts)
 
             # individual cores (simplified, assuming cpusPerNode <= 2 for now)
