@@ -1,5 +1,8 @@
 import subprocess
 import pwd
+import socket
+from datetime import datetime
+
 
 def get_user_usage() -> dict[str, dict[str, float]]:
     """
@@ -60,6 +63,8 @@ def get_user_usage() -> dict[str, dict[str, float]]:
 
     return usage_info
 
+
+    
 def get_load() -> tuple[float, float, float]:
     """
     Get the load average of the login nodes from the file /proc/loadavg
@@ -82,4 +87,88 @@ def get_load() -> tuple[float, float, float]:
         return (0.0, 0.0, 0.0)
     
 
+def get_memory() -> dict[str, float]:
+    """
+    Read the machine-wide memory state from /proc/meminfo.
+
+    Returns:
+        dict[str, float]: a dict with two keys, both values in gigabytes:
+            'total_gb'      - total RAM on this node
+            'avail_gb'  - RAM realistically available to new programs
+    """
     
+    result = {"total_gb": 0.0, "avail_gb": 0.0}
+    try:
+        with open("/proc/meminfo") as f:
+            for line in f:
+                if line.startswith("MemTotal:"):
+                    try:
+                        result["total_gb"] = int(line.split()[1]) / (1024 ** 2)
+                    except (ValueError, IndexError):
+                        pass
+                elif line.startswith("MemAvailable:"):
+                    try:
+                        result["avail_gb"] = int(line.split()[1]) / (1024 ** 2)
+                    except (ValueError, IndexError):
+                        pass
+    
+    except OSError as e:
+        print(f"Could not read /proc/meminfo: {e}")
+    
+    return result
+
+
+def get_user_count() -> int:
+    """ Gets the total number of users currently logged in on the current login
+    node
+
+        Return:
+            int: the number of users
+    """
+
+    try:
+        users = subprocess.run(
+            ["who"],
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=10)
+        
+        unique_users = {
+            line.split()[0]                # take ONLY the first token (username)
+            for line in users.stdout.splitlines()
+            if line.strip()
+        }
+        
+        return len(unique_users)
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
+        print(f"Error executing who command: {e.stderr}")
+        return 0
+
+def collect_login_data() -> dict:
+    """
+    Take a complete snapshot of this login node
+    
+    Returns:
+        dict: a snapshot with the following keys:
+            'hostname'   (str)   - short hostname, e.g. 'midway3-login4'
+            'timestamp'  (str)   - ISO 8601 collection time
+            'load'       (tuple) - (1, 5, 15) minute load averages
+            'memory'     (dict)  - {'total_gb', 'avail_gb'}
+            'user_count' (int)   - number of distinct logged-in users
+            'users'      (dict)  - per-user {cpu, mem, process_count}
+    """
+    
+    return {
+        "hostname": socket.gethostname().split(".")[0],
+        "timestamp": datetime.now().isoformat(),
+        "load": get_load(),
+        "user_count": get_user_count(),
+        "users": get_user_usage(),
+        "memory": get_memory(),
+    }
+
+if __name__ == "__main__":
+    import json
+    snapshot = collect_login_data()
+    print(json.dumps(snapshot, indent=2, default=str))
